@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Logan — Y3 Vocabulary + Writing (with Examples)</title>
+<style>
+  :root { --bg:#f8fafc; --card:#fff; --ink:#1f2937; --muted:#6b7280; --accent:#2563eb; --ring:rgba(37,99,235,.25);}  
+  * { box-sizing:border-box; }
+  body { margin:0; padding:24px; background:var(--bg); color:var(--ink);
+         font:16px/1.6 -apple-system, BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans"; }
+  header { max-width:1100px; margin:0 auto 16px auto; }
+  h1 { margin:0 0 6px 0; font-size:28px; }
+  .sub { color:var(--muted); font-size:14px; }
+  .toolbar { display:grid; grid-template-columns:1fr 260px 160px; gap:12px; margin-top:16px; }
+  input[type="search"], select { padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; background:#fff; outline:none; }
+  input[type="search"]:focus, select:focus { border-color:var(--accent); box-shadow:0 0 0 4px var(--ring);} 
+  .toggle { display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted);} 
+  main { max-width:1100px; margin:0 auto; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:12px; }
+  .card { background:var(--card); border:1px solid #e9e9ee; border-radius:14px; padding:14px; transition:.08s; }
+  .card:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,.06);} 
+  .row { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .word { font-weight:700; font-size:18px; }
+  .ex { color:var(--muted); margin-top:6px; }
+  .chip { display:inline-block; font-size:11px; padding:2px 8px; border-radius:999px; background:#eef3ff; color:#3055ff; margin-top:8px; }
+  .learned { appearance:none; width:18px; height:18px; border-radius:4px; border:2px solid #bbb; display:inline-grid; place-items:center; cursor:pointer; }
+  .learned:checked { border-color:#22c55e; background:#22c55e; }
+  .learned:checked::after { content:"✓"; color:#fff; font-size:12px; }
+
+  /* Add-Word panel */
+  .add { max-width:1100px; margin:18px auto 22px auto; background:#fff; border:1px solid #e9e9ee; border-radius:14px; padding:14px; }
+  .add h2 { margin:0 0 10px 0; font-size:18px; }
+  .add-grid { display:grid; grid-template-columns: 1.2fr 2fr 220px 220px 120px; gap:10px; }
+  .add input[type="text"], .add select { padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; }
+  .add button { padding:10px 12px; border:1px solid #1f2937; border-radius:10px; background:#111827; color:#fff; cursor:pointer; }
+  .add button:hover { filter:brightness(1.05); }
+  .msg { margin-top:8px; font-size:13px; color:#065f46; }
+
+  .footer { text-align:center; color:var(--muted); font-size:13px; margin:28px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Logan — Y3 Vocabulary + Writing (with Examples)</h1>
+  <div class="sub">Age 7–8 · Search · Filter by group · Mark ✓ when learned (saved locally)</div>
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search word/phrase or example…" />
+    <select id="section"><option value="all">All sections</option><option value="Daily Reading">Daily Reading</option></select>
+    <label class="toggle"><input type="checkbox" id="hideKnown" /> Hide learned</label>
+  </div>
+</header>
+
+<section class="add">
+  <h2>Add your own word</h2>
+  <div class="add-grid">
+    <input id="newWord" type="text" placeholder="Word (required)" />
+    <input id="newEx" type="text" placeholder="Example sentence (required)" />
+    <select id="addSection"></select>
+    <input id="newSection" type="text" placeholder="or type a NEW section (optional)" />
+    <button id="addBtn" type="button">Add</button>
+  </div>
+  <div id="addMsg" class="msg"></div>
+</section>
+
+<main>
+  <div class="grid" id="grid"><!-- cards render here --></div>
+</main>
+
+<div class="footer">Tip: Learn 3 new words a week · Say it → Spell it → Explain it → Use it. · Your added words are saved on this device (localStorage).</div>
+
+<script>
+// ===== DATA (full lists) =====
+const DATA = {
+  "Vocabulary — Core (Y3–4 tricky/common)": [
+    {w:"because",ex:"I wore boots because it was raining."},
+    {w:"different",ex:"This puzzle is different from the one we did yesterday."},
+    {w:"enough",ex:"We have enough apples for everyone."},
+    {w:"exercise",ex:"A short run is good exercise for your heart."},
+    {w:"favourite",ex:"My favourite snack is sliced mango."},
+    {w:"guard",ex:"A guard watches the museum at night."},
+    {w:"imagine",ex:"Imagine you could fly like a kite."},
+    {w:"important",ex:"It’s important to look both ways before crossing."},
+    {w:"island",ex:"We sailed to a small island on the lake."},
+    {w:"knowledge",ex:"Reading gives you knowledge about the world."},
+    {w:"length",ex:"Measure the length of the desk with a ruler."},
+    {w:"material",ex:"Wood is a strong material for building tables."},
+    {w:"mention",ex:"Did the teacher mention a quiz for Friday?"},
+    {w:"natural",ex:"The park has many natural ponds."},
+    {w:"popular",ex:"Football is a popular game at school."},
+    {w:"probably",ex:"It will probably be sunny this afternoon."},
+    {w:"promise",ex:"I promise to return your book tomorrow."},
+    {w:"quarter",ex:"A quarter of the cake is left."},
+    {w:"strength",ex:"Lifting the box took a lot of strength."},
+    {w:"suppose",ex:"I suppose we should start our homework now."},
+    {w:"accident",ex:"Tom had a bike accident but he is okay."},
+    {w:"address",ex:"Please write your home address on the form."},
+    {w:"believe",ex:"I believe you can do this question."},
+    {w:"breathe",ex:"Take a deep breath before you dive."},
+    {w:"calendar",ex:"Mark your birthday on the calendar."},
+    {w:"centre",ex:"The ball rolled to the centre of the circle."},
+    {w:"decide",ex:"Let’s decide which book to read first."},
+    {w:"describe",ex:"Can you describe the main character?"},
+    {w:"disappear",ex:"The rainbow will disappear when the sun goes in."},
+    {w:"early",ex:"We arrived early for swimming practice."},
+    {w:"earth",ex:"The Earth moves around the Sun."},
+    {w:"continue",ex:"Please continue writing the next paragraph."},
+    {w:"separate",ex:"Separate the red cubes from the blue ones."},
+    {w:"straight",ex:"Draw a straight line with a ruler."},
+    {w:"surprise",ex:"The party was a big surprise for Dad."},
+    {w:"through",ex:"We walked through the tunnel to the park."}
+  ],
+
+  "Vocabulary — Science (Skeletons & Animals)": [
+    {w:"skeleton",ex:"Your skeleton gives your body shape and support."},
+    {w:"skull",ex:"A helmet protects your skull when you ride a bike."},
+    {w:"spine",ex:"Your spine helps you stand up tall."},
+    {w:"ribs",ex:"Your ribs protect your heart and lungs."},
+    {w:"joint",ex:"A knee is a joint that bends your leg."},
+    {w:"muscle",ex:"You use a muscle to lift your backpack."},
+    {w:"tendon",ex:"A tendon joins muscle to bone."},
+    {w:"ligament",ex:"A ligament holds bones together at a joint."},
+    {w:"marrow",ex:"Bone marrow helps make new blood cells."},
+    {w:"predator",ex:"A lion is a predator that hunts other animals."},
+    {w:"prey",ex:"A zebra can be prey for a lion."},
+    {w:"carnivore",ex:"A carnivore eats meat."},
+    {w:"herbivore",ex:"A herbivore eats plants."},
+    {w:"omnivore",ex:"An omnivore eats both plants and meat."}
+  ],
+
+  "Vocabulary — Science (Light)": [
+    {w:"source",ex:"The Sun is a natural source of light."},
+    {w:"reflect",ex:"A mirror can reflect your face."},
+    {w:"reflection",ex:"We saw the reflection of the moon in the pond."},
+    {w:"shadow",ex:"Your shadow is longest in the late afternoon."},
+    {w:"opaque",ex:"Wood is opaque, so light cannot pass through it."},
+    {w:"transparent",ex:"Glass is transparent so we can see through it."},
+    {w:"translucent",ex:"Thin paper is translucent and lets some light through."},
+    {w:"beam",ex:"A beam of light shone through the window."},
+    {w:"ray",ex:"A ray of sunlight broke through the clouds."},
+    {w:"mirror",ex:"Use a mirror to look behind you safely."},
+    {w:"surface",ex:"Light bounces off a shiny surface."},
+    {w:"absorb",ex:"Dark cloth can absorb more light and heat."},
+    {w:"torch",ex:"Use a torch when it’s dark outside."}
+  ],
+
+  "Vocabulary — Science (Rocks & Fossils)": [
+    {w:"sedimentary",ex:"Sand can harden into sedimentary rock over time."},
+    {w:"igneous",ex:"Igneous rock forms when melted rock cools."},
+    {w:"metamorphic",ex:"Heat and pressure can change rock into metamorphic rock."},
+    {w:"mineral",ex:"Quartz is a shiny mineral found in many rocks."},
+    {w:"grain",ex:"This rock has rough grain you can feel."},
+    {w:"texture",ex:"The texture of chalk is soft and dusty."},
+    {w:"hardness",ex:"Diamond has a very high hardness."},
+    {w:"permeable",ex:"Sandstone is permeable and lets water pass through."},
+    {w:"fossil",ex:"We found a fossil of a leaf in the rock."},
+    {w:"erosion",ex:"Waves cause erosion along the seashore."},
+    {w:"soil",ex:"Seeds grow in rich soil."},
+    {w:"layer",ex:"The cliff shows many thin layers of rock."}
+  ],
+
+  "Vocabulary — Humanities (Stone Age)": [
+    {w:"Stone Age",ex:"In the Stone Age, people made tools from stone."},
+    {w:"Palaeolithic",ex:"Palaeolithic people moved often to follow animals."},
+    {w:"Mesolithic",ex:"In the Mesolithic time, people used small flint tools."},
+    {w:"Neolithic",ex:"Neolithic people began farming and living in villages."},
+    {w:"hunter-gatherer",ex:"A hunter-gatherer searched for wild plants and animals."},
+    {w:"nomad",ex:"A nomad travels and does not stay in one home for long."},
+    {w:"settlement",ex:"A settlement is a place where people live together."},
+    {w:"tribe",ex:"A tribe is a group of families who share customs."},
+    {w:"ancestor",ex:"An ancestor is a person in your family from long ago."},
+    {w:"cave",ex:"Cave walls show paintings from long ago."},
+    {w:"shelter",ex:"People built simple shelters from wood and animal skins."},
+    {w:"fire",ex:"Fire kept families warm and safe."},
+    {w:"flint",ex:"Flint was used to make sharp knives and arrowheads."},
+    {w:"spear",ex:"A spear is a long stick with a sharp point for hunting."},
+    {w:"axe",ex:"An axe helped to cut wood."},
+    {w:"pottery",ex:"People made pottery to store food and water."},
+    {w:"weaving",ex:"Weaving made baskets and cloth."},
+    {w:"mammoth",ex:"A mammoth is a huge, furry elephant-like animal."},
+    {w:"archaeologist",ex:"An archaeologist studies objects from the past."}
+  ],
+
+  "Vocabulary — Maths (White Rose)": [
+    {w:"place value",ex:"Place value tells us the value of each digit in a number."},
+    {w:"thousands",ex:"The number 3,245 has three thousands."},
+    {w:"hundreds",ex:"There are two hundreds in 245."},
+    {w:"tens",ex:"There are four tens in 45."},
+    {w:"ones",ex:"The last digit shows the ones."},
+    {w:"estimate",ex:"We estimate the total to check if our answer is sensible."},
+    {w:"perimeter",ex:"Add all sides to find the perimeter of the rectangle."},
+    {w:"fraction",ex:"A fraction shows equal parts of a whole."},
+    {w:"numerator",ex:"The numerator is the top number in a fraction."},
+    {w:"denominator",ex:"The denominator is the bottom number in a fraction."},
+    {w:"half",ex:"Half of eight is four."},
+    {w:"quarter",ex:"Share the pizza into four equal quarters."},
+    {w:"third",ex:"One third means one out of three equal parts."},
+    {w:"multiple",ex:"Twelve is a multiple of three."},
+    {w:"product",ex:"The product of 4 and 6 is 24."},
+    {w:"divide",ex:"Divide 20 sweets between 5 friends."},
+    {w:"array",ex:"We used an array of 3 rows and 4 columns."},
+    {w:"bar model",ex:"We drew a bar model to understand the word problem."},
+    {w:"mass",ex:"We measured the mass of the apple in grams."},
+    {w:"capacity",ex:"The bottle’s capacity is one litre."},
+    {w:"measure",ex:"Measure the length carefully with a ruler."},
+    {w:"timeline",ex:"Make a timeline to show events in order."},
+    {w:"money",ex:"Count the money to make the correct change."},
+    {w:"time",ex:"We read the time to the nearest five minutes."},
+    {w:"data",ex:"We collected data and made a chart."},
+    {w:"chart",ex:"Use a bar chart to show the results."}
+  ],
+
+  "School & Instruction words": [
+    {w:"predict",ex:"Predict what might happen next in the story."},
+    {w:"clarify",ex:"Please clarify what you mean by ‘it’."},
+    {w:"explain",ex:"Explain how you solved the puzzle."},
+    {w:"describe",ex:"Describe the setting using two adjectives."},
+    {w:"compare",ex:"Compare these two animals: how are they similar?"},
+    {w:"contrast",ex:"Contrast their differences in one sentence."},
+    {w:"justify",ex:"Justify your answer with evidence from the text."},
+    {w:"conclude",ex:"We conclude that plants need light to grow."},
+    {w:"evidence",ex:"What evidence supports your idea?"},
+    {w:"identify",ex:"Identify the main idea of the paragraph."},
+    {w:"retrieve",ex:"Retrieve two facts from the poster."},
+    {w:"infer",ex:"Infer how the character feels from his actions."}
+  ],
+
+  // Writing vocabulary groups
+  "Writing — Adjectives (Settings · positive)": [
+    {w:"attractive",ex:"An attractive garden grew beside the path."},
+    {w:"breathtaking",ex:"We saw a breathtaking view from the hill."},
+    {w:"magnificent",ex:"A magnificent castle stood by the river."},
+    {w:"spectacular",ex:"Fireworks lit a spectacular night sky."},
+    {w:"sparkling",ex:"The lake looked sparkling in the sun."},
+    {w:"tranquil",ex:"It was a tranquil morning by the pond."}
+  ],
+  "Writing — Adjectives (Settings · negative)": [
+    {w:"disgusting",ex:"A disgusting smell came from the bin."},
+    {w:"hideous",ex:"A hideous statue stood in the corner."},
+    {w:"sinister",ex:"A sinister shadow crept along the wall."},
+    {w:"eerie",ex:"An eerie silence filled the cave."},
+    {w:"crowded",ex:"The station was crowded and noisy."},
+    {w:"hectic",ex:"It felt hectic at the busy market."}
+  ],
+  "Writing — Adjectives (Feelings · positive)": [
+    {w:"delighted",ex:"She felt delighted to see her friend again."},
+    {w:"joyful",ex:"They were joyful after winning the game."},
+    {w:"relieved",ex:"I was relieved when the test was over."},
+    {w:"confident",ex:"He sounded confident during his speech."},
+    {w:"optimistic",ex:"I’m optimistic about tomorrow’s trip."}
+  ],
+  "Writing — Adjectives (Feelings · negative)": [
+    {w:"anxious",ex:"He was anxious before the race."},
+    {w:"furious",ex:"She felt furious when her bike was stolen."},
+    {w:"miserable",ex:"He looked miserable in the rain."},
+    {w:"terrified",ex:"The loud thunder left the puppy terrified."},
+    {w:"worried",ex:"Mum looked worried about the storm."}
+  ],
+  "Writing — Adjectives (Characters)": [
+    {w:"amiable",ex:"Our amiable neighbour always smiles at us."},
+    {w:"brave",ex:"The brave firefighter climbed the ladder."},
+    {w:"courageous",ex:"It was courageous to speak on stage."},
+    {w:"obnoxious",ex:"The obnoxious troll shouted at everyone."},
+    {w:"valiant",ex:"The valiant knight helped the village."}
+  ],
+
+  "Writing — Adverbs (How)": [
+    {w:"carefully",ex:"Cut the paper carefully along the line."},
+    {w:"cheerfully",ex:"She cheerfully greeted the class."},
+    {w:"gently",ex:"He gently placed the egg in the nest."},
+    {w:"swiftly",ex:"The fox ran swiftly across the field."},
+    {w:"nervously",ex:"I nervously raised my hand to answer."}
+  ],
+  "Writing — Adverbs (How often)": [
+    {w:"always",ex:"He always checks his work before handing it in."},
+    {w:"often",ex:"We often read together after dinner."},
+    {w:"sometimes",ex:"Sometimes the homework is tricky."},
+    {w:"rarely",ex:"We rarely see owls in the day."},
+    {w:"never",ex:"I never run by the swimming pool."}
+  ],
+  "Writing — Adverbs (Where & When)": [
+    {w:"above",ex:"The kite flew above the trees."},
+    {w:"inside",ex:"Please wait inside the classroom."},
+    {w:"outside",ex:"We ate lunch outside today."},
+    {w:"afterwards",ex:"Afterwards, we wrote a short diary entry."},
+    {w:"suddenly",ex:"Suddenly, the lights went out."}
+  ],
+
+  "Writing — Verbs (Movement)": [
+    {w:"stroll",ex:"We stroll slowly around the park."},
+    {w:"dash",ex:"He will dash to catch the bus."},
+    {w:"leap",ex:"The frog can leap over the log."},
+    {w:"twist",ex:"Twist the lid to open the jar."},
+    {w:"shuffle",ex:"The penguin will shuffle across the ice."}
+  ],
+  "Writing — Verbs (Voice)": [
+    {w:"whisper",ex:"She whispered the answer to her friend."},
+    {w:"murmur",ex:"They murmur quietly during the film."},
+    {w:"bellow",ex:"The coach will bellow if we are late."},
+    {w:"yell",ex:"Please don’t yell in the library."},
+    {w:"announce",ex:"The teacher will announce the winners."}
+  ],
+  "Writing — Verbs (Emotion)": [
+    {w:"sob",ex:"The child began to sob after the fall."},
+    {w:"grin",ex:"He could not help but grin."},
+    {w:"frown",ex:"Try not to frown at your work."},
+    {w:"tremble",ex:"Her hands tremble in the cold."},
+    {w:"sigh",ex:"Dad will sigh with relief."}
+  ],
+  "Writing — Verbs (Thought)": [
+    {w:"ponder",ex:"Let’s ponder different ways to solve it."},
+    {w:"imagine",ex:"Imagine a story set on the moon."},
+    {w:"reflect",ex:"We reflect on what went well."},
+    {w:"decide",ex:"We decide who goes first."},
+    {w:"plan",ex:"Plan your paragraph before you write."}
+  ],
+  "Writing — Verbs (Sense)": [
+    {w:"observe",ex:"Observe the bug with a magnifying glass."},
+    {w:"listen",ex:"Listen for the rhythm in the poem."},
+    {w:"taste",ex:"Taste the soup before adding salt."},
+    {w:"sniff",ex:"Sniff the flower gently."},
+    {w:"touch",ex:"Do not touch the display sign."}
+  ],
+
+  "Writing — Nouns (Collective)": [
+    {w:"team",ex:"Our team worked together to clean the beach."},
+    {w:"herd",ex:"A herd of cows grazed on the hill."},
+    {w:"swarm",ex:"A swarm of bees circled the hive."},
+    {w:"bunch",ex:"He gave Mum a bunch of flowers."},
+    {w:"pile",ex:"There is a pile of books on the desk."}
+  ],
+  "Writing — Nouns (Compound)": [
+    {w:"toothpaste",ex:"We put toothpaste on the brush."},
+    {w:"armchair",ex:"Grandpa sat in his armchair."},
+    {w:"headphones",ex:"She wore headphones on the bus."},
+    {w:"underground",ex:"We took the underground to the museum."},
+    {w:"snowball",ex:"They threw a snowball across the yard."}
+  ],
+
+  "Writing — Conjunctions (FANBOYS)": [
+    {w:"for",ex:"I brought a coat, for it looked like rain."},
+    {w:"and",ex:"Sam wanted to play, and Lily joined too."},
+    {w:"nor",ex:"He doesn’t like carrots, nor peas."},
+    {w:"but",ex:"I wanted to go outside, but it was too cold."},
+    {w:"or",ex:"Would you like juice or water?"},
+    {w:"yet",ex:"It was raining, yet we still went to the park."},
+    {w:"so",ex:"The sun was shining, so we went to the beach."}
+  ],
+  "Writing — Conjunctions (Subordinating)": [
+    {w:"if",ex:"If you finish your homework, we can play a game."},
+    {w:"since",ex:"Since it was raining, we stayed indoors."},
+    {w:"as",ex:"As the clock struck twelve, the fireworks began."},
+    {w:"when",ex:"When the bell rang, the children rushed outside."},
+    {w:"although",ex:"Although it was late, I wasn’t tired."},
+    {w:"while",ex:"While the cake was baking, we cleaned the table."},
+    {w:"after",ex:"We had a break after class."},
+    {w:"before",ex:"Finish your lunch before you start playing."},
+    {w:"until",ex:"We didn’t leave until the end."},
+    {w:"because",ex:"We wore coats because it was cold."}
+  ],
+  "Writing — Fronted Adverbials": [
+    {w:"Suddenly,",ex:"Suddenly, the lights flickered and went out."},
+    {w:"Fortunately,",ex:"Fortunately, the bus arrived on time."},
+    {w:"Carefully,",ex:"Carefully, she placed the glass on the tray."},
+    {w:"Nervously,",ex:"Nervously, he spoke into the microphone."},
+    {w:"Afterwards,",ex:"Afterwards, we shared our ideas with the class."}
+  ]
+};
+
+// ===== Utilities =====
+const grid = document.getElementById('grid');
+const filterBox = document.getElementById('q');
+const filterSection = document.getElementById('section');
+const hideKnown = document.getElementById('hideKnown');
+const addWordInput = document.getElementById('newWord');
+const addExInput = document.getElementById('newEx');
+const addSectionSel = document.getElementById('addSection');
+const newSectionInput = document.getElementById('newSection');
+const addBtn = document.getElementById('addBtn');
+const addMsg = document.getElementById('addMsg');
+const LS_CUSTOM = 'vocab:custom:list'; // [{section,word,ex}]
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+}
+
+function createCard(section, word, ex, keyPrefix='Seed'){
+  const art = document.createElement('article');
+  art.className = 'card';
+  art.dataset.section = section;
+  art.dataset.word = word.toLowerCase();
+  art.dataset.ex = ex.toLowerCase();
+  const key = `${keyPrefix}__${section}__${word}`;
+  art.innerHTML = `
+    <div class="row">
+      <span class="word">${escapeHtml(word)}</span>
+      <label title="Mark as learned"><input class="learned" type="checkbox" data-key="${key}"></label>
+    </div>
+    <div class="ex">${escapeHtml(ex)}</div>
+    <div><span class="chip">${escapeHtml(section)}</span></div>
+  `;
+  grid.appendChild(art);
+}
+
+function renderFromData(){
+  grid.innerHTML = '';
+  Object.keys(DATA).forEach(sec => {
+    DATA[sec].forEach(({w,ex}) => createCard(sec, w, ex, 'Seed'));
+  });
+}
+
+function sectionSetFromDataAndCards(){
+  const set = new Set(Object.keys(DATA));
+  document.querySelectorAll('.card').forEach(c => set.add(c.dataset.section));
+  set.add('Daily Reading');
+  return Array.from(set).sort((a,b)=>a.localeCompare(b));
+}
+
+function rebuildSectionSelectors(){
+  const list = sectionSetFromDataAndCards();
+  const cur = filterSection.value;
+  filterSection.innerHTML = '<option value="all">All sections</option>' + list.map(s=>`<option value="${s}">${s}</option>`).join('');
+  filterSection.value = (cur && (cur==='all' || list.includes(cur))) ? cur : 'all';
+  addSectionSel.innerHTML = '<option value="">Daily Reading (default)</option>' + list.map(s=>`<option value="${s}">${s}</option>`).join('');
+}
+
+function restoreChecks(scope=document){
+  scope.querySelectorAll('.learned').forEach(cb => {
+    const k = 'vocab:' + cb.dataset.key;
+    cb.checked = localStorage.getItem(k) === '1';
+    cb.addEventListener('change', () => localStorage.setItem(k, cb.checked ? '1' : '0'));
+  });
+}
+
+function filterCards(){
+  const term = filterBox.value.trim().toLowerCase();
+  const sec = filterSection.value;
+  const hide = hideKnown.checked;
+  const cards = Array.from(document.querySelectorAll('.card'));
+  let visible = 0;
+  cards.forEach(card => {
+    const w = card.dataset.word;
+    const ex = card.dataset.ex;
+    const s = card.dataset.section;
+    const isKnown = card.querySelector('.learned').checked;
+    let ok = true;
+    if (sec !== 'all' && s !== sec) ok = false;
+    if (term && !(w.includes(term) || ex.includes(term))) ok = false;
+    if (hide && isKnown) ok = false;
+    card.style.display = ok ? '' : 'none';
+    if (ok) visible++;
+  });
+  document.title = `Logan — Y3 Vocab + Writing (${visible} shown)`;
+}
+
+function loadCustom(){
+  let list = [];
+  try{ list = JSON.parse(localStorage.getItem(LS_CUSTOM) || '[]'); }catch(e){ list = []; }
+  list.forEach(({section,word,ex}) => createCard(section, word, ex, 'Custom'));
+}
+
+function saveCustom(list){
+  localStorage.setItem(LS_CUSTOM, JSON.stringify(list));
+}
+
+function addCustomWord(){
+  const word = addWordInput.value.trim();
+  const ex = addExInput.value.trim();
+  const chosen = addSectionSel.value.trim();
+  const typed = newSectionInput.value.trim();
+  const section = typed || chosen || 'Daily Reading';
+  if(!word || !ex){ addMsg.textContent = 'Please enter a word and an example sentence.'; return; }
+  const exists = Array.from(document.querySelectorAll('.card')).some(c => c.dataset.section===section && c.dataset.word===word.toLowerCase());
+  if(exists){ addMsg.textContent = 'This word already exists in the selected section.'; return; }
+  let list = [];
+  try{ list = JSON.parse(localStorage.getItem(LS_CUSTOM) || '[]'); }catch(e){ list = []; }
+  list.unshift({section,word,ex});
+  saveCustom(list);
+  createCard(section, word, ex, 'Custom');
+  rebuildSectionSelectors();
+  filterCards();
+  restoreChecks(grid.lastElementChild);
+  addMsg.textContent = `Added to "${section}".`;
+  addWordInput.value=''; addExInput.value=''; newSectionInput.value=''; addSectionSel.value='';
+}
+
+// Wire up
+[filterBox, filterSection, hideKnown].forEach(el => el.addEventListener('input', filterCards));
+addBtn.addEventListener('click', addCustomWord);
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderFromData();
+  loadCustom();
+  rebuildSectionSelectors();
+  restoreChecks();
+  filterCards();
+});
+</script>
+</body>
+</html>

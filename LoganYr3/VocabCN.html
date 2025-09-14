@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Logan — Y3 Vocabulary & Writing (EN⇄中文) · Print to PDF</title>
+<style>
+  :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--band:#f8fafc;--head:#eef2ff;--headline:#c7d2fe}
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px;color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+  header{max-width:1000px;margin:0 auto 16px auto}
+  h1{margin:0 0 6px 0;font-size:24px}
+  .sub{color:var(--muted);font-size:13px}
+  .controls{display:flex;gap:10px;margin-top:12px}
+  button{padding:10px 12px;border:1px solid #111827;background:#111827;color:#fff;border-radius:10px;cursor:pointer}
+  main{max-width:1000px;margin:0 auto}
+  section{margin:18px 0}
+  h2{font-size:18px;margin:0 0 8px 0}
+  table{width:100%;border-collapse:collapse}
+  th,td{border:1px solid var(--line);padding:6px 8px;vertical-align:top}
+  th{background:var(--head);border-bottom:2px solid var(--headline);text-align:left}
+  tbody tr:nth-child(odd){background:var(--band)}
+  .hint{color:var(--muted);font-size:13px;margin:10px 0 0}
+  @media print{
+    .controls, .sub {display:none}
+    body{padding:0}
+    section{break-inside:avoid}
+    @page{size:A4; margin:14mm}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Logan — Year 3 Vocabulary & Writing（中英对照）</h1>
+  <div class="sub">Age 7–8 · Print-friendly · 点击下方按钮直接“打印/另存为 PDF”</div>
+  <div class="controls">
+    <button onclick="window.print()">🖨️ Print / Save as PDF</button>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+// ==== Data (word, cn, example) — aligned with your HTML flashcards ====
+const DATA = {
+  "Vocabulary — Core (Y3–4 tricky/common)": [
+    ["because","因为","I wore boots because it was raining."],
+    ["different","不同的","This puzzle is different from the one we did yesterday."],
+    ["enough","足够的","We have enough apples for everyone."],
+    ["exercise","运动；锻炼","A short run is good exercise for your heart."],
+    ["favourite","最喜欢的","My favourite snack is sliced mango."],
+    ["guard","警卫；看守","A guard watches the museum at night."],
+    ["imagine","想象","Imagine you could fly like a kite."],
+    ["important","重要的","It’s important to look both ways before crossing."],
+    ["island","岛屿","We sailed to a small island on the lake."],
+    ["knowledge","知识","Reading gives you knowledge about the world."],
+    ["length","长度","Measure the length of the desk with a ruler."],
+    ["material","材料","Wood is a strong material for building tables."],
+    ["mention","提到","Did the teacher mention a quiz for Friday?"],
+    ["natural","自然的","The park has many natural ponds."],
+    ["popular","受欢迎的","Football is a popular game at school."],
+    ["probably","可能；大概","It will probably be sunny this afternoon."],
+    ["promise","承诺","I promise to return your book tomorrow."],
+    ["quarter","四分之一；一刻钟","A quarter of the cake is left."],
+    ["strength","力量；强度","Lifting the box took a lot of strength."],
+    ["suppose","假设；认为","I suppose we should start our homework now."],
+    ["accident","事故；意外","Tom had a bike accident but he is okay."],
+    ["address","地址","Please write your home address on the form."],
+    ["believe","相信","I believe you can do this question."],
+    ["breathe","呼吸","Take a deep breath before you dive."],
+    ["calendar","日历","Mark your birthday on the calendar."],
+    ["centre","中心","The ball rolled to the centre of the circle."],
+    ["decide","决定","Let’s decide which book to read first."],
+    ["describe","描述","Can you describe the main character?"],
+    ["disappear","消失","The rainbow will disappear when the sun goes in."],
+    ["early","早的；提前的","We arrived early for swimming practice."],
+    ["earth","地球；土壤","The Earth moves around the Sun."],
+    ["continue","继续","Please continue writing the next paragraph."],
+    ["separate","分开的；分开","Separate the red cubes from the blue ones."],
+    ["straight","直的；笔直的","Draw a straight line with a ruler."],
+    ["surprise","惊喜；使惊讶","The party was a big surprise for Dad."],
+    ["through","通过；穿过","We walked through the tunnel to the park."]
+  ],
+
+  "Vocabulary — Science (Skeletons & Animals)": [
+    ["skeleton","骨骼","Your skeleton gives your body shape and support."],
+    ["skull","头骨","A helmet protects your skull when you ride a bike."],
+    ["spine","脊柱；脊椎","Your spine helps you stand up tall."],
+    ["ribs","肋骨","Your ribs protect your heart and lungs."],
+    ["joint","关节","A knee is a joint that bends your leg."],
+    ["muscle","肌肉","You use a muscle to lift your backpack."],
+    ["tendon","肌腱","A tendon joins muscle to bone."],
+    ["ligament","韧带","A ligament holds bones together at a joint."],
+    ["marrow","骨髓","Bone marrow helps make new blood cells."],
+    ["predator","捕食者","A lion is a predator that hunts other animals."],
+    ["prey","猎物","A zebra can be prey for a lion."],
+    ["carnivore","食肉动物","A carnivore eats meat."],
+    ["herbivore","食草动物","A herbivore eats plants."],
+    ["omnivore","杂食动物","An omnivore eats both plants and meat."]
+  ],
+
+  "Vocabulary — Science (Light)": [
+    ["source","光源","The Sun is a natural source of light."],
+    ["reflect","反射（动）","A mirror can reflect your face."],
+    ["reflection","反射（名）；倒影","We saw the reflection of the moon in the pond."],
+    ["shadow","影子；阴影","Your shadow is longest in the late afternoon."],
+    ["opaque","不透明的","Wood is opaque, so light cannot pass through it."],
+    ["transparent","透明的","Glass is transparent so we can see through it."],
+    ["translucent","半透明的","Thin paper is translucent and lets some light through."],
+    ["beam","光束","A beam of light shone through the window."],
+    ["ray","光线","A ray of sunlight broke through the clouds."],
+    ["mirror","镜子","Use a mirror to look behind you safely."],
+    ["surface","表面","Light bounces off a shiny surface."],
+    ["absorb","吸收","Dark cloth can absorb more light and heat."],
+    ["torch","手电筒","Use a torch when it’s dark outside."]
+  ],
+
+  "Vocabulary — Science (Rocks & Fossils)": [
+    ["sedimentary","沉积岩的","Sand can harden into sedimentary rock over time."],
+    ["igneous","火成岩的","Igneous rock forms when melted rock cools."],
+    ["metamorphic","变质岩的","Heat and pressure can change rock into metamorphic rock."],
+    ["mineral","矿物","Quartz is a shiny mineral found in many rocks."],
+    ["grain","颗粒；纹理","This rock has rough grain you can feel."],
+    ["texture","质地；纹理","The texture of chalk is soft and dusty."],
+    ["hardness","硬度","Diamond has a very high hardness."],
+    ["permeable","可渗透的","Sandstone is permeable and lets water pass through."],
+    ["fossil","化石","We found a fossil of a leaf in the rock."],
+    ["erosion","侵蚀","Waves cause erosion along the seashore."],
+    ["soil","土壤","Seeds grow in rich soil."],
+    ["layer","层；层次","The cliff shows many thin layers of rock."]
+  ],
+
+  "Vocabulary — Humanities (Stone Age)": [
+    ["Stone Age","石器时代","In the Stone Age, people made tools from stone."],
+    ["Palaeolithic","旧石器时代的","Palaeolithic people moved often to follow animals."],
+    ["Mesolithic","中石器时代的","In the Mesolithic time, people used small flint tools."],
+    ["Neolithic","新石器时代的","Neolithic people began farming and living in villages."],
+    ["hunter-gatherer","狩猎采集者","A hunter-gatherer searched for wild plants and animals."],
+    ["nomad","游牧民；游牧者","A nomad travels and does not stay in one home for long."],
+    ["settlement","定居点","A settlement is a place where people live together."],
+    ["tribe","部落","A tribe is a group of families who share customs."],
+    ["ancestor","祖先","An ancestor is a person in your family from long ago."],
+    ["cave","洞穴","Cave walls show paintings from long ago."],
+    ["shelter","庇护所；遮蔽处","People built simple shelters from wood and animal skins."],
+    ["fire","火","Fire kept families warm and safe."],
+    ["flint","燧石","Flint was used to make sharp knives and arrowheads."],
+    ["spear","矛；长矛","A spear is a long stick with a sharp point for hunting."],
+    ["axe","斧头","An axe helped to cut wood."],
+    ["pottery","陶器","People made pottery to store food and water."],
+    ["weaving","编织","Weaving made baskets and cloth."],
+    ["mammoth","猛犸象","A mammoth is a huge, furry elephant-like animal."],
+    ["archaeologist","考古学家","An archaeologist studies objects from the past."]
+  ],
+
+  "Vocabulary — Maths (White Rose)": [
+    ["place value","位值","Place value tells us the value of each digit in a number."],
+    ["thousands","千；千位","The number 3,245 has three thousands."],
+    ["hundreds","百；百位","There are two hundreds in 245."],
+    ["tens","十位","There are four tens in 45."],
+    ["ones","个位","The last digit shows the ones."],
+    ["estimate","估计","We estimate the total to check if our answer is sensible."],
+    ["perimeter","周长","Add all sides to find the perimeter of the rectangle."],
+    ["fraction","分数","A fraction shows equal parts of a whole."],
+    ["numerator","分子","The numerator is the top number in a fraction."],
+    ["denominator","分母","The denominator is the bottom number in a fraction."],
+    ["half","二分之一","Half of eight is four."],
+    ["quarter","四分之一","Share the pizza into four equal quarters."],
+    ["third","三分之一","One third means one out of three equal parts."],
+    ["multiple","倍数","Twelve is a multiple of three."],
+    ["product","积；乘积","The product of 4 and 6 is 24."],
+    ["divide","除；分配","Divide 20 sweets between 5 friends."],
+    ["array","阵列；数组","We used an array of 3 rows and 4 columns."],
+    ["bar model","条形模型","We drew a bar model to understand the word problem."],
+    ["mass","质量","We measured the mass of the apple in grams."],
+    ["capacity","容量","The bottle’s capacity is one litre."],
+    ["measure","测量","Measure the length carefully with a ruler."],
+    ["timeline","时间线","Make a timeline to show events in order."],
+    ["money","金钱；货币","Count the money to make the correct change."],
+    ["time","时间","We read the time to the nearest five minutes."],
+    ["data","数据","We collected data and made a chart."],
+    ["chart","图表","Use a bar chart to show the results."]
+  ],
+
+  "School & Instruction words": [
+    ["predict","预测","Predict what might happen next in the story."],
+    ["clarify","澄清","Please clarify what you mean by ‘it’."],
+    ["explain","解释","Explain how you solved the puzzle."],
+    ["describe","描述","Describe the setting using two adjectives."],
+    ["compare","比较","Compare these two animals: how are they similar?"],
+    ["contrast","对比","Contrast their differences in one sentence."],
+    ["justify","论证；证明…正当","Justify your answer with evidence from the text."],
+    ["conclude","得出结论","We conclude that plants need light to grow."],
+    ["evidence","证据","What evidence supports your idea?"],
+    ["identify","识别；确定","Identify the main idea of the paragraph."],
+    ["retrieve","提取；检索","Retrieve two facts from the poster."],
+    ["infer","推断","Infer how the character feels from his actions."]
+  ],
+
+  "Writing — Adjectives (Settings · positive)": [
+    ["attractive","吸引人的","An attractive garden grew beside the path."],
+    ["breathtaking","令人叹为观止的","We saw a breathtaking view from the hill."],
+    ["magnificent","宏伟的；壮丽的","A magnificent castle stood by the river."],
+    ["spectacular","壮观的","Fireworks lit a spectacular night sky."],
+    ["sparkling","闪闪发光的","The lake looked sparkling in the sun."],
+    ["tranquil","宁静的","It was a tranquil morning by the pond."]
+  ],
+  "Writing — Adjectives (Settings · negative)": [
+    ["disgusting","恶心的；令人作呕的","A disgusting smell came from the bin."],
+    ["hideous","极丑的；可憎的","A hideous statue stood in the corner."],
+    ["sinister","阴森的；不祥的","A sinister shadow crept along the wall."],
+    ["eerie","诡异的；怪异的","An eerie silence filled the cave."],
+    ["crowded","拥挤的","The station was crowded and noisy."],
+    ["hectic","繁忙而混乱的","It felt hectic at the busy market."]
+  ],
+  "Writing — Adjectives (Feelings · positive)": [
+    ["delighted","高兴的；欣喜的","She felt delighted to see her friend again."],
+    ["joyful","快乐的","They were joyful after winning the game."],
+    ["relieved","如释重负的","I was relieved when the test was over."],
+    ["confident","自信的","He sounded confident during his speech."],
+    ["optimistic","乐观的","I’m optimistic about tomorrow’s trip."]
+  ],
+  "Writing — Adjectives (Feelings · negative)": [
+    ["anxious","焦虑的","He was anxious before the race."],
+    ["furious","暴怒的","She felt furious when her bike was stolen."],
+    ["miserable","悲惨的；痛苦的","He looked miserable in the rain."],
+    ["terrified","吓坏的；极度害怕的","The loud thunder left the puppy terrified."],
+    ["worried","担心的","Mum looked worried about the storm."]
+  ],
+  "Writing — Adjectives (Characters)": [
+    ["amiable","和蔼可亲的","Our amiable neighbour always smiles at us."],
+    ["brave","勇敢的","The brave firefighter climbed the ladder."],
+    ["courageous","有勇气的；勇敢的","It was courageous to speak on stage."],
+    ["obnoxious","讨厌的；令人反感的","The obnoxious troll shouted at everyone."],
+    ["valiant","英勇的","The valiant knight helped the village."]
+  ],
+
+  "Writing — Adverbs (How)": [
+    ["carefully","小心地","Cut the paper carefully along the line."],
+    ["cheerfully","高兴地；愉快地","She cheerfully greeted the class."],
+    ["gently","轻轻地","He gently placed the egg in the nest."],
+    ["swiftly","迅速地","The fox ran swiftly across the field."],
+    ["nervously","紧张地","I nervously raised my hand to answer."]
+  ],
+  "Writing — Adverbs (How often)": [
+    ["always","总是","He always checks his work before handing it in."],
+    ["often","经常","We often read together after dinner."],
+    ["sometimes","有时","Sometimes the homework is tricky."],
+    ["rarely","很少","We rarely see owls in the day."],
+    ["never","从不","I never run by the swimming pool."]
+  ],
+  "Writing — Adverbs (Where & When)": [
+    ["above","在上方","The kite flew above the trees."],
+    ["inside","在里面","Please wait inside the classroom."],
+    ["outside","在外面","We ate lunch outside today."],
+    ["afterwards","之后；后来","Afterwards, we wrote a short diary entry."],
+    ["suddenly","突然地","Suddenly, the lights went out."]
+  ],
+
+  "Writing — Verbs (Movement)": [
+    ["stroll","漫步","We stroll slowly around the park."],
+    ["dash","猛冲；飞奔","He will dash to catch the bus."],
+    ["leap","跳跃","The frog can leap over the log."],
+    ["twist","扭转；拧","Twist the lid to open the jar."],
+    ["shuffle","拖着脚走；挪动","The penguin will shuffle across the ice."]
+  ],
+  "Writing — Verbs (Voice)": [
+    ["whisper","低声说；耳语","She whispered the answer to her friend."],
+    ["murmur","低语；嘟囔","They murmur quietly during the film."],
+    ["bellow","大吼","The coach will bellow if we are late."],
+    ["yell","叫喊","Please don’t yell in the library."],
+    ["announce","宣布；公布","The teacher will announce the winners."]
+  ],
+  "Writing — Verbs (Emotion)": [
+    ["sob","抽泣","The child began to sob after the fall."],
+    ["grin","咧嘴笑","He could not help but grin."],
+    ["frown","皱眉","Try not to frown at your work."],
+    ["tremble","发抖","Her hands tremble in the cold."],
+    ["sigh","叹气","Dad will sigh with relief."]
+  ],
+  "Writing — Verbs (Thought)": [
+    ["ponder","沉思；思考","Let’s ponder different ways to solve it."],
+    ["imagine","想象","Imagine a story set on the moon."],
+    ["reflect","反思；思考","We reflect on what went well."],
+    ["decide","决定","We decide who goes first."],
+    ["plan","计划；打算","Plan your paragraph before you write."]
+  ],
+  "Writing — Verbs (Sense)": [
+    ["observe","观察","Observe the bug with a magnifying glass."],
+    ["listen","倾听","Listen for the rhythm in the poem."],
+    ["taste","品尝","Taste the soup before adding salt."],
+    ["sniff","嗅；闻","Sniff the flower gently."],
+    ["touch","触摸","Do not touch the display sign."]
+  ],
+
+  "Writing — Nouns (Collective)": [
+    ["team","团队","Our team worked together to clean the beach."],
+    ["herd","兽群","A herd of cows grazed on the hill."],
+    ["swarm","蜂群；一大群","A swarm of bees circled the hive."],
+    ["bunch","一束；一串","He gave Mum a bunch of flowers."],
+    ["pile","一堆","There is a pile of books on the desk."]
+  ],
+  "Writing — Nouns (Compound)": [
+    ["toothpaste","牙膏","We put toothpaste on the brush."],
+    ["armchair","扶手椅","Grandpa sat in his armchair."],
+    ["headphones","耳机","She wore headphones on the bus."],
+    ["underground","地铁；地下的","We took the underground to the museum."],
+    ["snowball","雪球","They threw a snowball across the yard."]
+  ],
+
+  "Writing — Conjunctions (FANBOYS)": [
+    ["for","因为（表示原因）","I brought a coat, for it looked like rain."],
+    ["and","和；并且","Sam wanted to play, and Lily joined too."],
+    ["nor","也不","He doesn’t like carrots, nor peas."],
+    ["but","但是","I wanted to go outside, but it was too cold."],
+    ["or","或者；还是","Would you like juice or water?"],
+    ["yet","然而；但是","It was raining, yet we still went to the park."],
+    ["so","所以；因此","The sun was shining, so we went to the beach."]
+  ],
+  "Writing — Conjunctions (Subordinating)": [
+    ["if","如果","If you finish your homework, we can play a game."],
+    ["since","由于；自从","Since it was raining, we stayed indoors."],
+    ["as","当…之时；因为","As the clock struck twelve, the fireworks began."],
+    ["when","当…时","When the bell rang, the children rushed outside."],
+    ["although","尽管","Although it was late, I wasn’t tired."],
+    ["while","当…时；而","While the cake was baking, we cleaned the table."],
+    ["after","在…之后","We had a break after class."],
+    ["before","在…之前","Finish your lunch before you start playing."],
+    ["until","直到","We didn’t leave until the end."],
+    ["because","因为","We wore coats because it was cold."]
+  ],
+  "Writing — Fronted Adverbials": [
+    ["Suddenly,","突然地，","Suddenly, the lights flickered and went out."],
+    ["Fortunately,","幸运的是，","Fortunately, the bus arrived on time."],
+    ["Carefully,","小心地，","Carefully, she placed the glass on the tray."],
+    ["Nervously,","紧张地，","Nervously, he spoke into the microphone."],
+    ["Afterwards,","之后，随后，","Afterwards, we shared our ideas with the class."]
+  ]
+};
+
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  Object.entries(DATA).forEach(([sec, rows], idx) => {
+    const secEl = document.createElement('section');
+    const h = document.createElement('h2');
+    h.textContent = `${idx+1}. ${sec}`;
+    secEl.appendChild(h);
+    const t = document.createElement('table');
+    t.innerHTML = `<thead><tr><th style="width:28%">Word</th><th style="width:24%">中文释义</th><th>Example sentence</th></tr></thead>`;
+    const tb = document.createElement('tbody');
+    rows.forEach(([w,cn,ex]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${escapeHtml(w)}</td><td>${escapeHtml(cn)}</td><td>${escapeHtml(ex)}</td>`;
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    secEl.appendChild(t);
+    const hint = document.createElement('div');
+    hint.className = 'hint';
+    hint.textContent = 'Tip: 每周掌握 3 个核心词（会读/会拼/会解释/会造句），周末复盘。';
+    secEl.appendChild(hint);
+    app.appendChild(secEl);
+  });
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]))}
+render();
+</script>
+</body>
+</html>
