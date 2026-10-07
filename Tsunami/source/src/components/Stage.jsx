@@ -1,0 +1,39 @@
+import {useEffect,useRef,useState} from 'react';
+import {Renderer} from '../rendering/Renderer';
+import {BASE_HEIGHT,CALM_SEA,DAM_X,clamp} from '../simulation/locations';
+const TOOLS=['none','pencil','eraser','hammer'];
+export function Stage({simulation,mode,onUpdate,onImages,onMode}){
+  const canvas=useRef(null),view=useRef(null),renderer=useRef(null),gesture=useRef(null),preview=useRef(null),keyPoint=useRef({x:58,y:3}),[ready,setReady]=useState(false),[error,setError]=useState(''),[hint,setHint]=useState(''),[marker,setMarker]=useState(null);
+  const current=useRef({mode,onUpdate,onImages});current.current={mode,onUpdate,onImages};
+  useEffect(()=>{let frame=0,stopped=false,last=null,accumulator=0,uiTime=0,r;try{r=new Renderer(canvas.current,simulation);renderer.current=r;r.render();r.load().then(()=>{if(stopped)return;setReady(true);current.current.onImages(r.thumbnails());}).catch(e=>setError(e.message));}catch(e){setError('The 3D view could not start. Reload to try again.');return;}
+    const loop=(time)=>{if(stopped)return;frame=requestAnimationFrame(loop);if(document.hidden){last=null;return;}const dt=last===null?0:Math.min(.08,(time-last)/1000);last=time;accumulator+=dt;if(simulation.status==='running'){let count=0;while(accumulator>=1/60&&count++<5){simulation.step(1/60);accumulator-=1/60;}}else accumulator=0;r.render();if(time-uiTime>200){uiTime=time;current.current.onUpdate();if(['pencil','eraser','hammer'].includes(current.current.mode)){const p=r.screenPoint(DAM_X,CALM_SEA+(preview.current??simulation.dam.height));setMarker({x:p.x,y:p.y,dam:true});}else if(!TOOLS.includes(current.current.mode)){const p=r.screenPoint(keyPoint.current.x,keyPoint.current.y);setMarker({x:p.x,y:p.y,dam:false});}else setMarker(null);}};
+    frame=requestAnimationFrame(loop);const resize=()=>{r.resize();r.render();};const observer=new ResizeObserver(resize);observer.observe(view.current);const resetTime=()=>{last=null;};document.addEventListener('visibilitychange',resetTime);
+    return()=>{stopped=true;cancelAnimationFrame(frame);observer.disconnect();document.removeEventListener('visibilitychange',resetTime);r.dispose();renderer.current=null;};
+  },[simulation]);
+  useEffect(()=>{gesture.current=null;preview.current=null;if(renderer.current)renderer.current.showDamHeight(null);setHint('');},[mode,simulation.generation]);
+  const report=(text)=>{setHint(text);onUpdate();};
+  const pointerDown=(e)=>{if(!ready||!renderer.current||mode==='none')return;if(e.target.closest('button')&&!e.target.closest('.dam-handle'))return;const p=renderer.current.worldPoint(e.clientX,e.clientY);
+    if(mode==='pencil'||mode==='eraser'){if(simulation.status!=='ready')return;if(Math.abs(p.x-DAM_X)>6){report('Drag on the dam to change its height.');return;}e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);gesture.current={y:p.y,height:simulation.dam.height,moved:false};preview.current=simulation.dam.height;}
+    else if(mode==='hammer'){if(Math.abs(p.x-DAM_X)>4||p.y>CALM_SEA+simulation.dam.height+2||p.y< -25){report('Tap the dam to hammer it.');return;}report(simulation.hammer()?'Hammer hit — the dam is weakening.':'Start the waves to use Hammer.');}
+    else{const result=simulation.place(mode,p.x,p.y);keyPoint.current=p;report(result.ok?'Added to the scene. Tap again to add another.':result.reason);}
+  };
+  const pointerMove=(e)=>{if(!gesture.current||!renderer.current)return;const p=renderer.current.worldPoint(e.clientX,e.clientY),g=gesture.current,delta=p.y-g.y;g.moved=g.moved||Math.abs(delta)>.4;preview.current=mode==='pencil'?clamp(g.height+Math.max(0,delta),g.height,BASE_HEIGHT*2.5):clamp(g.height+Math.min(0,delta),BASE_HEIGHT,g.height);renderer.current.showDamHeight(preview.current);};
+  const pointerUp=()=>{if(!gesture.current)return;const g=gesture.current;let height=preview.current??g.height;if(mode==='eraser'&&!g.moved)height=Math.max(BASE_HEIGHT,g.height-2);simulation.setDamHeight(height);preview.current=null;gesture.current=null;renderer.current?.showDamHeight(null);report(mode==='eraser'?'Added concrete erased; the water barrier is lower.':'Dam raised with solid concrete.');};
+  const cancel=()=>{gesture.current=null;preview.current=null;renderer.current?.showDamHeight(null);};
+  const keyboard=(e)=>{if(e.key==='Escape'){cancel();onMode('none');return;}if(!ready)return;
+    if(mode==='pencil'||mode==='eraser'){if(['ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();const h=preview.current??simulation.dam.height;preview.current=clamp(h+(e.key==='ArrowUp'?1:-1),mode==='pencil'?simulation.dam.height:BASE_HEIGHT,mode==='eraser'?simulation.dam.height:BASE_HEIGHT*2.5);renderer.current.showDamHeight(preview.current);}if(e.key==='Enter'){e.preventDefault();simulation.setDamHeight(preview.current??simulation.dam.height);cancel();report('Dam height updated.');}}
+    else if(mode==='hammer'&&e.key==='Enter'){e.preventDefault();simulation.hammer();onUpdate();}
+    else if(!TOOLS.includes(mode)){const p=keyPoint.current;if(e.key.startsWith('Arrow')){e.preventDefault();if(e.key==='ArrowLeft')p.x-=2;if(e.key==='ArrowRight')p.x+=2;if(e.key==='ArrowUp')p.y+=2;if(e.key==='ArrowDown')p.y-=2;p.x=clamp(p.x,-65,142);p.y=clamp(p.y,-24,60);}if(e.key==='Enter'){e.preventDefault();const result=simulation.place(mode,p.x,p.y);report(result.ok?'Added to scene.':result.reason);}}
+  };
+  const instructions=mode==='pencil'?'Pencil · Drag up on the dam to add thick, solid concrete.':mode==='eraser'?'Eraser · Drag down on the dam to remove added concrete.':mode==='hammer'?'Hammer · Tap the dam. Each hit weakens the barrier.':!TOOLS.includes(mode)?'Tap a street, roof, boat deck or water to place your selection.':simulation.status==='finished'?'Simulation stopped. Start rebuilds this scene; choosing a city restores its original scene.':simulation.status==='running'?'Watch the waves, hammer the dam, or add people and boats.':'Choose a tool or press Start to send the waves.';
+  return <main ref={view} className={`stage mode-${mode}`} data-status={simulation.status} data-ready={ready&&!error?'true':'false'} data-time={simulation.time.toFixed(2)} data-generation={simulation.generation} data-dam-height={simulation.dam.height.toFixed(1)} data-people={simulation.people.length} data-boats={simulation.boats.length} data-breached={simulation.dam.breached} tabIndex="0" aria-label="Interactive side-view tsunami scene" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={cancel} onKeyDown={keyboard}>
+    <canvas ref={canvas} aria-label="3D city, dam, water and people"/>
+    {!ready&&!error&&<div className="stage-loading">Preparing the 3D scene…</div>}
+    {error&&<div className="stage-error" role="alert"><p>{error}</p><button onClick={()=>location.reload()}>Reload</button></div>}
+    <div className="location-caption"><strong>{simulation.location.name}</strong><span>{simulation.location.subtitle}</span></div>
+    <div className="dam-status"><div><span>Dam integrity</span><strong className="dam-integrity">{Math.round(simulation.dam.integrity)}%</strong></div><div className="integrity-track"><i style={{width:`${simulation.dam.integrity}%`}}/></div><small>{simulation.dam.breached?'Barrier breached':`Height ${simulation.dam.height.toFixed(0)}`}</small></div>
+    {marker&&ready&&<button className={`dam-handle ${marker.dam?'':'placement-marker'}`} aria-label={marker.dam?'Dam tool target':'Placement target'} style={{left:marker.x,top:marker.y}}><span>{marker.dam?(mode==='hammer'?'×':'↕'):'+'}</span></button>}
+    <div className="scene-message" role="status" aria-live="polite">{hint||instructions}</div>
+    {simulation.status==='running'&&<div className="phase-message">{simulation.phase==='rescue'?'Rescue boats arriving':simulation.dam.breached?'Water rushing through the breach':'Waves approaching the dam'}</div>}
+  </main>;
+}

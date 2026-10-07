@@ -1,0 +1,4 @@
+{"milestone":12,"stage":{"status":"running","ready":"true","time":"13.22","generation":"4","damHeight":"18.0","people":"30","boats":"3","breached":"false"},"phase":"Waves approaching the dam"}
+{"milestone":28,"stage":{"status":"running","ready":"true","time":"29.13","generation":"4","damHeight":"18.0","people":"30","boats":"3","breached":"true"},"phase":"Water rushing through the breach"}
+{"milestone":"rescue","actualPhase":"Rescue","phaseMessage":"Rescue boats arriving","manuallyPlacedBoats":0,"stage":{"status":"running","ready":"true","time":"37.45","generation":"4","damHeight":"18.0","people":"34","boats":"5","breached":"true"}}
+{"milestone":"reset","stage":{"status":"ready","ready":"true","time":"0.00","generation":"6","damHeight":"18.0","people":"30","boats":"3","breached":"false"},"integrity":"100%","errors":[]}

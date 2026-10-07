@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'tests/e2e',timeout:60000,expect:{timeout:15000},reporter:'list',use:{baseURL:'http://127.0.0.1:4188',viewport:{width:1440,height:950},launchOptions:{args:['--use-gl=angle','--use-angle=swiftshader','--enable-webgl']},screenshot:'only-on-failure'},outputDir:'/tmp/tsunami-playwright-results',webServer:{command:'node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 4188',url:'http://127.0.0.1:4188',reuseExistingServer:true}});

@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Logan's Game Requirements \u2014 MVC Template",
+    "locale": "en",
+    "output": "GameMVC/mvc-architecture-map.html",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "external": {
+          "label": "Player"
+        },
+        "backend": {
+          "label": "Controller"
+        },
+        "database": {
+          "label": "Model"
+        },
+        "frontend": {
+          "label": "View"
+        }
+      }
+    },
+    "views": [
+      {
+        "id": "input-to-display",
+        "label": "Input to display",
+        "focus": [
+          "player",
+          "controller",
+          "model",
+          "view"
+        ],
+        "note": "Player input becomes a command; the Model updates state; the View renders that state."
+      },
+      {
+        "id": "controller-template",
+        "label": "Controller prompts",
+        "focus": [
+          "controller",
+          "controls"
+        ],
+        "note": "Describe input methods, action mapping, selection, editing and actions allowed in each state."
+      },
+      {
+        "id": "model-template",
+        "label": "Model prompts",
+        "focus": [
+          "model",
+          "world"
+        ],
+        "note": "Describe objects, properties, consequences, timing, simulation states and reset rules."
+      },
+      {
+        "id": "view-template",
+        "label": "View prompts",
+        "focus": [
+          "view",
+          "presentation"
+        ],
+        "note": "Describe the camera, reference artwork, proportions, layout, sound and visible feedback."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "player",
+      "type": "external",
+      "label": "Player Input",
+      "sublabel": "Keys / click / touch / drag",
+      "pos": [
+        40,
+        70
+      ],
+      "size": [
+        180,
+        76
+      ],
+      "icon": "person"
+    },
+    {
+      "id": "controller",
+      "type": "backend",
+      "label": "Controller",
+      "sublabel": "Interpret player actions",
+      "pos": [
+        340,
+        70
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "model",
+      "type": "database",
+      "label": "Model Update",
+      "sublabel": "Own rules and current state",
+      "pos": [
+        700,
+        70
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "view",
+      "type": "frontend",
+      "label": "View Display",
+      "sublabel": "Render the current state",
+      "pos": [
+        1060,
+        70
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "controls",
+      "type": "backend",
+      "label": "Controls & Tools",
+      "sublabel": "Map input to valid commands",
+      "pos": [
+        340,
+        285
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "world",
+      "type": "database",
+      "label": "World, Rules & States",
+      "sublabel": "Objects / timing / reset",
+      "pos": [
+        700,
+        285
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "presentation",
+      "type": "frontend",
+      "label": "Scene & Feedback",
+      "sublabel": "Camera / art / layout / sound",
+      "pos": [
+        1060,
+        285
+      ],
+      "size": [
+        220,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "player-input",
+      "from": "player",
+      "to": "controller",
+      "label": "input",
+      "variant": "emphasis"
+    },
+    {
+      "id": "command-update",
+      "from": "controller",
+      "to": "model",
+      "label": "command",
+      "variant": "emphasis"
+    },
+    {
+      "id": "state-display",
+      "from": "model",
+      "to": "view",
+      "label": "state",
+      "variant": "emphasis"
+    },
+    {
+      "id": "control-responsibility",
+      "from": "controller",
+      "to": "controls",
+      "label": "handles",
+      "variant": "dashed"
+    },
+    {
+      "id": "world-responsibility",
+      "from": "model",
+      "to": "world",
+      "label": "owns",
+      "variant": "dashed"
+    },
+    {
+      "id": "presentation-responsibility",
+      "from": "view",
+      "to": "presentation",
+      "label": "shows",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "slate",
+      "title": "Start Here \u2014 My Game Brief",
+      "items": [
+        "My game is called: ___. The player can: ___. The player's goal is: ___.",
+        "The setting is: ___. First ___, then ___, finally ___.",
+        "Build first: ___, ___ and ___. Save for the next version: ___.",
+        "I will be happy when I can see or do: ___. Choose one playable scene to check first.",
+        "This is a planning template drawn from Logan's three games; it is not a claim about their exact source-code architecture."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Model \u2014 Fill In the World and Rules",
+      "items": [
+        "Objects and properties: What exists? ___. What values can change? ___.",
+        "Cause and effect: If ___ happens, ___ should happen. Different objects react like this: ___.",
+        "States: Before Start ___; while Running ___; after Finish ___.",
+        "Timing and progression: First ___, then ___, finally ___. How quickly should it happen? ___.",
+        "Goal and reset: Success means ___. Restart restores ___. Changing a location restores ___."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "View \u2014 Fill In Appearance and Feedback",
+      "items": [
+        "Camera: The player sees the world from ___. Structures need this depth: ___.",
+        "Visual reference: Match ___. Three details that make it look right: ___, ___ and ___.",
+        "Colors and scale: Materials/colors ___. People, boats and buildings are proportioned like ___.",
+        "Layout: Selector ___. Main scene ___. Controls ___. Tools/palette ___.",
+        "Motion, sound and visibility: The player should see ___ and hear ___. Important objects must remain visible when ___."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Controller \u2014 Fill In Player Interaction",
+      "items": [
+        "Input methods: Keyboard / buttons / click / touch / drag: ___.",
+        "Action mapping: When I press or use ___, send the command to ___.",
+        "Selection and placement: Choose ___, then ___ to place or change it.",
+        "Editing tools: ___ changes ___. Cancel or undo works like ___.",
+        "Allowed actions: In Ready ___; in Running ___; in Finished ___. Start, Finish and Restart send these commands: ___."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Driving \u2014 MVC Example",
+      "items": [
+        "Controller: Arrow keys or WASD and on-screen direction buttons steer the player car; Restart requests a new run.",
+        "Model: Drive for as long as possible. Buildings remain intact after collisions; trees fall; serious crashes respawn the car nearby. Water blocks driving.",
+        "View: A 3D follow camera shows hills, city streets and coastline, with detailed scenery and visible collision effects.",
+        "Check: Hit a tree and keep driving; crash into a building and reappear near the crash. Compare scenery against the chosen picture."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Earthquake Simulator \u2014 MVC Example",
+      "items": [
+        "Controller: Select one landmark; Start, Finish, Smaller and Bigger request simulation actions.",
+        "Model: Ready / Running / Finished; light shaking sways the structure, sustained strong shaking damages it; occupants and traffic evacuate gradually. Finish preserves the result; Start rebuilds.",
+        "View: A recognizable landmark dominates the scene, with detailed surrounding housing, varied cars, an alarm and readable progressive collapse.",
+        "Check: Show swaying before collapse, gradual evacuation, a frozen result after Finish and a rebuilt landmark on the next Start."
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Tsunami Simulator \u2014 MVC Example",
+      "items": [
+        "Controller: Select Shanghai, New York or Hawaii; use the four simulation buttons; Pencil, Eraser and Hammer edit or damage the dam; select an entity then tap to place it.",
+        "Model: Waves overtop and weaken the dam; a breach accelerates flooding. Boats float or capsize, passengers swim, and rescue follows the wave sequence. Location selection restores a fresh scene.",
+        "View: A side camera reveals 3D buildings and dam, natural colors, small people and boats, cracks, splashes and visible underwater objects. Rubbish stays beside its bin.",
+        "Check: A taller dam blocks the same early wave; hammer damage opens the barrier; revisiting a city restores pristine defaults; faster floodwater reaches buildings sooner."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "One Feature, Three Responsibilities",
+      "items": [
+        "Bigger button \u2014 View: its label, size, color and screen position.",
+        "Bigger button \u2014 Controller: a press sends an increase-size command.",
+        "Bigger button \u2014 Model: wave size changes within bounds and affects future waves.",
+        "The Controller requests an action; the Model decides the outcome; the View makes that outcome visible."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Update Template \u2014 Keep Each Change Clear",
+      "items": [
+        "Change: ___. What happens now: ___. What I want instead: ___.",
+        "Model: What rule, state or timing changes? ___. View: What looks, moves or sounds different? ___. Controller: What player action changes? ___.",
+        "Keep unchanged: ___. Priority: Now / Next / Optional. I can check it by: ___.",
+        "Example: Floodwater arrives too slowly. Change Model transport timing; check the View to see earlier arrival; keep the existing controls.",
+        "Ask the assistant to keep confirmed requirements separate from proposed defaults and update this brief after each correction."
+      ]
+    }
+  ]
+}
