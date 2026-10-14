@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#102c38"/>
+<title>桂林 · 阳朔旅行地图 | Guilin Travel Map</title>
+<meta name="description" content="桂林、阳朔旅行地图：景点、酒店位置、机场、游船码头和香格里拉周边吃喝购物，一键高德导航。"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{--ink:#173342;--muted:#64808a;--bg:#f5f8f7;--green:#0e796e;--card:#fff;--line:#e5ecea;--gold:#d5ad65}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--green);text-decoration:none}button,input{font:inherit}
+.hero{padding:28px clamp(18px,5vw,65px) 22px;background:linear-gradient(110deg,#0c3543,#145a57 65%,#297665);color:#fff}
+.eyebrow{letter-spacing:.2em;font-size:11px;opacity:.82;text-transform:uppercase}.hero h1{font-size:clamp(25px,4vw,40px);margin:8px 0}.hero p{margin:0;color:#d8ebe7;line-height:1.7;max-width:850px;font-size:14px}
+main{max-width:1500px;padding:18px clamp(12px,3.8vw,50px) 50px;margin:auto}
+.tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}.tab{background:#fff;border:1px solid var(--line);padding:12px 18px;border-radius:12px;cursor:pointer;color:var(--ink);font-weight:650}.tab.active{background:#0d625e;color:white;border-color:#0d625e}
+.layout{display:grid;grid-template-columns:minmax(310px,420px) minmax(350px,1fr);gap:14px;align-items:start}.panel{background:var(--card);border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 8px 35px #17433b09}
+.panel-head{padding:17px 18px 10px}.panel h2{font-size:17px;margin:0 0 6px}.sub{font-size:12px;color:var(--muted);line-height:1.6}.controls{padding:0 16px 14px}.search{width:100%;border:1px solid #d9e4e0;border-radius:11px;padding:12px 13px;outline-color:#0e796e;background:#fcfefd}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px}.tag{border:1px solid #dce8e4;background:#fff;border-radius:99px;padding:7px 10px;color:#4a6969;font-size:12px;cursor:pointer}.tag.active{background:#e2f2ed;color:#0d665f;border-color:#76b6aa}
+.places{max-height:620px;overflow-y:auto;border-top:1px solid var(--line)}.place{display:flex;align-items:start;gap:11px;padding:12px 17px;border-bottom:1px solid #eff3f1;cursor:pointer}.place:hover{background:#f5faf7}.symbol{display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex-shrink:0;background:#edf5f2;border-radius:10px;font-size:18px}.name{font-size:14px;font-weight:700;line-height:1.45}.note{font-size:12px;color:#6b8089;margin:5px 0 8px;line-height:1.5}.links{display:flex;gap:13px;font-size:12px}.mapwrap{position:relative;overflow:hidden}#map{height:min(70vh,730px);min-height:440px;background:#deebe8}.floating{position:absolute;z-index:500;bottom:14px;left:14px;background:white;border:1px solid #d8e5df;padding:9px 12px;border-radius:9px;font-size:11px;color:#526f72;box-shadow:0 3px 13px #1233}.leaflet-popup-content{min-width:205px;margin:15px 14px}.popup-title{font-weight:750;font-size:15px;margin-bottom:4px}.popup-sub{color:#61787e;font-size:12px;line-height:1.6;margin:8px 0}.popup-link{display:block;padding:10px;text-align:center;background:#0f776c;color:#fff!important;border-radius:9px;font-size:12px;font-weight:650}.pin{width:31px;height:31px;border:3px solid white;box-shadow:0 2px 10px #19362c45;border-radius:50%;display:grid;place-items:center;font-size:15px}.pin.hotel{background:#e0eeff}.pin.city{background:#e0f7e8}.pin.yangshuo{background:#fff0d4}.pin.transit{background:#efe5ff}.pin.food{background:#ffe7e3}.pin.optional{background:#eeeeef}
+.routecards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:17px}.day{background:white;border:1px solid var(--line);border-radius:13px;padding:16px}.day strong{font-size:14px}.day p{font-size:12px;line-height:1.85;margin:8px 0 0;color:#58747b}.hint{padding:16px 18px;background:#ecf5f1;border-radius:13px;color:#486962;font-size:12px;line-height:1.9;margin-top:17px}.foot{color:#72868e;font-size:11px;line-height:1.8;margin:16px 0}
+.leaflet-container{font-family:inherit!important}
+@media(max-width:820px){.hero{padding:24px 17px}.layout{display:flex;flex-direction:column}.mapwrap{order:-1;width:100%}#map{height:53vh;min-height:365px}.side{width:100%}.places{max-height:none}.routecards{grid-template-columns:repeat(2,minmax(0,1fr))}.tabs{position:sticky;top:0;z-index:1000;background:var(--bg);padding:8px 0;margin:0}}
+@media(max-width:440px){.routecards{grid-template-columns:1fr 1fr}.day{padding:11px}.tab{padding:11px 13px;font-size:13px}}
+</style>
+</head>
+<body>
+<header class="hero">
+<div class="eyebrow">Guilin · Yangshuo · Travel Atlas</div>
+<h1>山水桂林 · 阳朔旅行地图</h1>
+<p>两张地图合在一个公开网页：看桂林—阳朔行程位置，或切换到香格里拉周边的餐饮商圈。点击地点可定位、查看说明，并一键打开高德地图导航。</p>
+</header>
+<main>
+<div class="tabs"><button class="tab active" data-view="trip">🗺️ 桂林 · 阳朔全部地点</button><button class="tab" data-view="nearby">🍜 香格里拉周边吃喝玩</button></div>
+<div class="layout">
+<section class="panel side"><div class="panel-head"><h2 id="listTitle">行程景点与交通地点</h2><div class="sub" id="listIntro">包含市区、阳朔、机场、酒店及龙脊梯田备选地点。非一日完整路线。</div></div><div class="controls"><input class="search" id="search" placeholder="搜索地点，例如：西街 / 象鼻山 / 万达"/><div class="tags" id="tags"></div></div><div class="places" id="places"></div></section>
+<section class="panel mapwrap"><div id="map"></div><div class="floating">📍 点选标记查看高德导航<br>地图为位置参考，非实时路线</div></section>
+</div>
+<div id="routes" class="routecards">
+<div class="day"><strong>① 桂林市区自由游</strong><p>喜来登周边散步 → 象鼻山 → 日月双塔 → 正阳步行街。桂海晴岚根据抵达时间及体力机动安排。</p></div>
+<div class="day"><strong>② 会议与换酒店</strong><p>桂林宾馆附近办事。可将行李寄存在原酒店，会后取行李，再前往香格里拉。</p></div>
+<div class="day"><strong>③ 漓江—阳朔一日</strong><p>桂林 → 竹江码头 → 漓江游船 → 阳朔西街 → 返回桂林。遇龙河、十里画廊、兴坪需按实际团队路线取舍。</p></div>
+<div class="day"><strong>④ 返程与备选</strong><p>按航班时间前往两江机场。龙脊梯田路程远，本次可保留为下次旅行备选。</p></div>
+</div>
+<div class="hint" id="hint">💡 <b>阳朔路线提醒：</b>20元人民币背景位于兴坪，西街位于阳朔县城，水厄底码头在遇龙河，千里江山图位于葡萄镇。完整漓江游船通常无法兼顾所有点，请根据跟团路线选择。</div>
+<div class="foot">公开分享版本：仅包含公共地点，不包含个人航班、房价、住宿日期或会议日程。部分定位为景区中心/商圈参考点，不代表实际入口；高德坐标与 OSM 底图已作常见坐标系换算。最终位置、营业状态及交通请以高德地图和景区官方信息为准。地图底图 © OpenStreetMap contributors。</div>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+"use strict";
+var places=[
+{id:"sheraton",name:"桂林喜来登饭店",lat:25.274027,lng:110.299078,type:"hotel",views:["trip"],icon:"🏨",note:"滨江路15号。适合步行去象鼻山、日月双塔和正阳步行街。",addr:"桂林喜来登饭店"},
+{id:"shangrila",name:"桂林香格里拉酒店",lat:25.295386,lng:110.307330,type:"hotel",views:["trip","nearby"],icon:"🏨",note:"环城北二路111号。周边可找早餐和米粉，商场建议打车。",addr:"桂林香格里拉酒店"},
+{id:"bravo",name:"桂林宾馆（榕湖）",lat:25.273623,lng:110.286186,type:"hotel",views:["trip"],icon:"📍",note:"榕湖南路14号，市区参考地标。",addr:"桂林宾馆 榕湖南路14号"},
+{id:"elephant",name:"象鼻山景区",lat:25.267579,lng:110.296573,type:"city",views:["trip"],icon:"🐘",note:"桂林标志景点；从喜来登步行可达，入园前确认入口。",addr:"桂林象鼻山景区"},
+{id:"gate3",name:"象鼻山景区3号门",lat:25.271574,lng:110.298103,type:"city",views:["trip"],icon:"🚶",note:"滨江路附近的入口，适合从喜来登出发步行抵达。",addr:"象鼻山景区3号门"},
+{id:"towers",name:"日月双塔",lat:25.271420,lng:110.294826,type:"city",views:["trip"],icon:"🏯",note:"杉湖湖景，推荐傍晚与夜景。",addr:"桂林日月双塔"},
+{id:"zhengyang",name:"正阳步行街",lat:25.27485,lng:110.2967,type:"city",views:["trip"],icon:"🛍️",note:"市中心餐饮、购物与散步区域；标记为街区参考点。",approx:true,addr:"桂林正阳步行街"},
+{id:"guihai",name:"桂海晴岚",lat:25.265909,lng:110.359652,type:"city",views:["trip"],icon:"🌄",note:"航天路22号，草坪和喀斯特峰林，适合白天拍照。",addr:"信昌桂海晴岚景区"},
+{id:"airport",name:"桂林两江国际机场",lat:25.216995,lng:110.047569,type:"transit",views:["trip"],icon:"✈️",note:"抵达/返程交通点；请预留足够机场办理手续时间。",addr:"桂林两江国际机场"},
+{id:"zhujiang",name:"竹江码头",lat:25.127003,lng:110.433510,type:"transit",views:["trip"],icon:"🚢",note:"完整漓江四星游船常见登船码头；位置参考，按实际船票为准。",approx:true,addr:"桂林竹江码头"},
+{id:"weststreet",name:"阳朔西街",lat:24.773869,lng:110.493986,type:"yangshuo",views:["trip"],icon:"🏮",note:"阳朔县城步行街，常作为游船下船后的自由活动区域。",addr:"阳朔西街"},
+{id:"20yuan",name:"20元人民币背景观景台",lat:24.9188,lng:110.525,type:"yangshuo",views:["trip"],icon:"💴",note:"兴坪镇漓江沿岸；此图为区域参考点，具体打卡机位请用高德再次定位。",approx:true,addr:"20元人民币背景观景台 阳朔兴坪"},
+{id:"gallery",name:"十里画廊 · 工农桥",lat:24.736,lng:110.469,type:"yangshuo",views:["trip"],icon:"🏞️",note:"十里画廊靠近遇龙河一段；按团队线路安排停留。",approx:true,addr:"阳朔十里画廊工农桥"},
+{id:"paint",name:"千里江山图大型水墨画打卡地",lat:24.909773,lng:110.410986,type:"yangshuo",views:["trip"],icon:"🖼️",note:"葡萄镇杨梅岭下村附近，和阳朔西街不在同一区域。",addr:"千里江山图大型水墨画打卡地 阳朔"},
+{id:"shuidi",name:"遇龙河水厄底码头",lat:24.742248,lng:110.471387,type:"yangshuo",views:["trip"],icon:"🛶",note:"遇龙河人工竹筏线路的重要码头，与漓江游船不同。",addr:"遇龙河水厄底码头"},
+{id:"longji",name:"龙脊梯田",lat:25.770717,lng:110.140047,type:"optional",views:["trip"],icon:"🌾",note:"在桂林北部，距离较远。此为景区区域参考点，建议留给下次专程游。",approx:true,addr:"桂林龙脊梯田"},
+{id:"wanda",name:"桂林叠彩万达广场",lat:25.314127,lng:110.318818,type:"food",views:["nearby"],icon:"🍜",note:"滨北路169号。商场集中用餐、咖啡、购物，建议打车。",addr:"桂林叠彩万达广场"},
+{id:"beiji",name:"北极广场商圈",lat:25.3054,lng:110.2963,type:"food",views:["nearby"],icon:"🛒",note:"中山北路附近本地生活商圈；此标记为区域参考。",approx:true,addr:"桂林北极广场"},
+{id:"walmart",name:"广运美居 / 沃尔玛商圈",lat:25.312,lng:110.298,type:"food",views:["nearby"],icon:"🛍️",note:"中山北路商圈。超市门店和经营状态请导航前确认；标记仅为区域参考。",approx:true,addr:"桂林广运美居购物广场 沃尔玛"},
+{id:"yushanbridge",name:"虞山桥周边餐饮",lat:25.2959,lng:110.3047,type:"food",views:["nearby"],icon:"🥢",note:"靠近香格里拉；可按‘桂林米粉’或‘早餐’在高德搜索实际营业商家。",approx:true,addr:"桂林虞山桥 米粉"},
+{id:"yushan",name:"虞山公园",lat:25.298976,lng:110.301490,type:"city",views:["nearby"],icon:"🌳",note:"中山北路70号，酒店周边散步备选。",addr:"桂林虞山公园"},
+{id:"mulong",name:"木龙湖",lat:25.291612,lng:110.299316,type:"city",views:["nearby"],icon:"🌿",note:"桂林叠彩区的湖景景点，适合有闲暇时游览。",addr:"桂林木龙湖"}
+];
+var labels={all:"全部地点",hotel:"酒店 / 地标",city:"桂林景点",yangshuo:"阳朔景点",food:"餐饮商圈",transit:"机场 / 码头",optional:"较远备选"};
+var map,layer,markers={},view="trip",cat="all",query="";
+function amap(p){return "https://uri.amap.com/search?keyword="+encodeURIComponent(p.addr || p.name)+"&city="+encodeURIComponent("桂林")+"&view=map";}
+function rad(a){return a*Math.PI/180;}
+function outChina(lat,lng){return lng<72.004||lng>137.8347||lat<0.8293||lat>55.8271;}
+function latTrans(x,y){var ret=-100+2*x+3*y+.2*y*y+.1*x*y+.2*Math.sqrt(Math.abs(x));ret+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;ret+=(20*Math.sin(y*Math.PI)+40*Math.sin(y/3*Math.PI))*2/3;ret+=(160*Math.sin(y/12*Math.PI)+320*Math.sin(y*Math.PI/30))*2/3;return ret;}
+function lngTrans(x,y){var ret=300+x+2*y+.1*x*x+.1*x*y+.1*Math.sqrt(Math.abs(x));ret+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;ret+=(20*Math.sin(x*Math.PI)+40*Math.sin(x/3*Math.PI))*2/3;ret+=(150*Math.sin(x/12*Math.PI)+300*Math.sin(x/30*Math.PI))*2/3;return ret;}
+function gcjToWgs(lat,lng){if(outChina(lat,lng))return [lat,lng];var dLat=latTrans(lng-105,lat-35),dLng=lngTrans(lng-105,lat-35),r=6378245,ee=.006693421622965943,s=Math.sin(rad(lat));var magic=1-ee*s*s,root=Math.sqrt(magic);dLat=(dLat*180)/((r*(1-ee))/(magic*root)*Math.PI);dLng=(dLng*180)/(r/root*Math.cos(rad(lat))*Math.PI);return [lat-dLat,lng-dLng];}
+function el(tag,cl,txt){var e=document.createElement(tag);if(cl)e.className=cl;if(txt)e.textContent=txt;return e;}
+function filtered(){return places.filter(function(p){return p.views.indexOf(view)!==-1&&(cat==="all"||p.type===cat)&&(!query||(p.name+p.note).toLowerCase().indexOf(query.toLowerCase())!==-1);});}
+function displaySet(){return places.filter(function(p){return p.views.indexOf(view)!==-1;});}
+function focus(p){if(!map)return;var m=markers[p.id];if(m){map.setView(m.getLatLng(), Math.max(map.getZoom(),view==="nearby"?14:13),{animate:true});m.openPopup();}}
+function makeCards(){var root=document.getElementById("places");root.innerHTML="";var items=filtered();if(!items.length){var empty=el("div","sub","没有匹配的地点，尝试清除搜索关键词。");empty.style.padding="25px";root.appendChild(empty);}
+items.forEach(function(p){var row=el("div","place");var ico=el("span","symbol",p.icon);var content=el("div");content.style.flex="1";content.appendChild(el("div","name",p.name));content.appendChild(el("div","note",p.note+(p.approx?" · 定位约为区域参考":"")));var links=el("div","links"),a=el("a",null,"📍 高德导航 ↗");a.href=amap(p);a.target="_blank";a.rel="noopener noreferrer";a.onclick=function(e){e.stopPropagation();};links.appendChild(a);var locate=el("a",null,"在地图中定位");locate.href="#";locate.onclick=function(e){e.preventDefault();e.stopPropagation();focus(p);};links.appendChild(locate);content.appendChild(links);row.appendChild(ico);row.appendChild(content);row.onclick=function(){focus(p);};root.appendChild(row);});
+}
+function renderTags(){var root=document.getElementById("tags");root.innerHTML="";var types=["all","hotel","city",view==="trip"?"yangshuo":"food"];if(view==="trip")types.push("transit","optional");types.forEach(function(t){var btn=el("button","tag"+(cat===t?" active":""),labels[t]);btn.onclick=function(){cat=t;render();};root.appendChild(btn);});}
+function popupHtml(p){var title=String(p.name).replace(/</g,"&lt;"),note=String(p.note).replace(/</g,"&lt;");return '<div class="popup-title">'+p.icon+" "+title+'</div><div class="popup-sub">'+note+(p.approx?"<br>⚠️ 此位置为区域参考":"")+'</div><a class="popup-link" target="_blank" rel="noopener noreferrer" href="'+amap(p)+'">用高德地图打开 / 导航 ↗</a>';}
+function makeMap(){if(!window.L)return;map=L.map("map",{scrollWheelZoom:false,zoomControl:true});L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);layer=L.layerGroup().addTo(map);map.setView([25.26,110.28],10);}
+function fit(){if(!map)return;var chosen=displaySet().filter(function(p){return view!=="trip"||p.type!=="optional";});var latlngs=chosen.map(function(p){return gcjToWgs(p.lat,p.lng);});if(latlngs.length)map.fitBounds(latlngs,{padding:[28,28],maxZoom:view==="nearby"?14:12});}
+function drawMap(){if(!map)return;layer.clearLayers();markers={};var sel=filtered();sel.forEach(function(p){var ll=gcjToWgs(p.lat,p.lng);var ic=L.divIcon({html:'<div class="pin '+p.type+'">'+p.icon+'</div>',className:"",iconSize:[31,31],iconAnchor:[15,15]});var m=L.marker(ll,{icon:ic}).bindPopup(popupHtml(p));m.addTo(layer);markers[p.id]=m;});}
+function render(){renderTags();makeCards();drawMap();}
+function changeView(v){view=v;cat="all";query="";document.getElementById("search").value="";document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-view")===view);});document.getElementById("listTitle").textContent=view==="trip"?"行程景点与交通地点":"香格里拉附近的吃喝玩";document.getElementById("listIntro").textContent=view==="trip"?"涵盖桂林市区、阳朔、机场、码头与远郊备选。":"从香格里拉出发：社区早餐、购物商圈、附近公园。";document.getElementById("routes").style.display=view==="trip"?"grid":"none";document.getElementById("hint").innerHTML=view==="trip"?"💡 <b>阳朔路线提醒：</b>20元人民币背景在兴坪，西街在阳朔县城，水厄底码头在遇龙河。一个跟团行程未必能覆盖全部景点。":"💡 <b>吃饭建议：</b>简单早餐可以先看虞山桥一带；想逛大型商场、选择更多餐厅，优先考虑叠彩万达。显示的是地点，不是实时营业保证。";render();if(map){setTimeout(function(){map.invalidateSize();fit();},70);}}
+document.querySelectorAll(".tab").forEach(function(b){b.addEventListener("click",function(){changeView(b.getAttribute("data-view"));});});
+document.getElementById("search").addEventListener("input",function(e){query=e.target.value.trim();render();});
+makeMap();changeView("trip");
+})();
+</script>
+</body></html>
