@@ -6,6 +6,7 @@ from pathlib import Path
 
 folder = Path(__file__).resolve().parent.parent
 assets = {
+ 'pilot': folder/'source/screenshots/pilot-life.png',
  'driving': folder/'source/screenshots/driving.png',
  'quakeReady': folder/'source/screenshots/quake-ready.png',
  'quakeStrong': folder/'source/screenshots/quake-strong.png',

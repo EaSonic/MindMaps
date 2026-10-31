@@ -2,7 +2,7 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Logan's Game Requirements \u2014 MVC Template",
+    "title": "Logan's Game Requirements — MVC Template",
     "locale": "en",
     "output": "GameMVC/mvc-architecture-map.html",
     "quality_profile": "showcase",
@@ -211,18 +211,18 @@
   "cards": [
     {
       "dot": "slate",
-      "title": "Start Here \u2014 My Game Brief",
+      "title": "Start Here — My Game Brief",
       "items": [
         "My game is called: ___. The player can: ___. The player's goal is: ___.",
         "The setting is: ___. First ___, then ___, finally ___.",
         "Build first: ___, ___ and ___. Save for the next version: ___.",
         "I will be happy when I can see or do: ___. Choose one playable scene to check first.",
-        "This is a planning template drawn from Logan's three games; it is not a claim about their exact source-code architecture."
+        "This is a planning template drawn from Logan's four games; it is not a claim about their exact source-code architecture."
       ]
     },
     {
       "dot": "emerald",
-      "title": "Model \u2014 Fill In the World and Rules",
+      "title": "Model — Fill In the World and Rules",
       "items": [
         "Objects and properties: What exists? ___. What values can change? ___.",
         "Cause and effect: If ___ happens, ___ should happen. Different objects react like this: ___.",
@@ -233,7 +233,7 @@
     },
     {
       "dot": "cyan",
-      "title": "View \u2014 Fill In Appearance and Feedback",
+      "title": "View — Fill In Appearance and Feedback",
       "items": [
         "Camera: The player sees the world from ___. Structures need this depth: ___.",
         "Visual reference: Match ___. Three details that make it look right: ___, ___ and ___.",
@@ -244,7 +244,7 @@
     },
     {
       "dot": "emerald",
-      "title": "Controller \u2014 Fill In Player Interaction",
+      "title": "Controller — Fill In Player Interaction",
       "items": [
         "Input methods: Keyboard / buttons / click / touch / drag: ___.",
         "Action mapping: When I press or use ___, send the command to ___.",
@@ -255,7 +255,7 @@
     },
     {
       "dot": "amber",
-      "title": "Driving \u2014 MVC Example",
+      "title": "Driving — MVC Example",
       "items": [
         "Controller: Arrow keys or WASD and on-screen direction buttons steer the player car; Restart requests a new run.",
         "Model: Drive for as long as possible. Buildings remain intact after collisions; trees fall; serious crashes respawn the car nearby. Water blocks driving.",
@@ -265,7 +265,7 @@
     },
     {
       "dot": "violet",
-      "title": "Earthquake Simulator \u2014 MVC Example",
+      "title": "Earthquake Simulator — MVC Example",
       "items": [
         "Controller: Select one landmark; Start, Finish, Smaller and Bigger request simulation actions.",
         "Model: Ready / Running / Finished; light shaking sways the structure, sustained strong shaking damages it; occupants and traffic evacuate gradually. Finish preserves the result; Start rebuilds.",
@@ -275,7 +275,7 @@
     },
     {
       "dot": "orange",
-      "title": "Tsunami Simulator \u2014 MVC Example",
+      "title": "Tsunami Simulator — MVC Example",
       "items": [
         "Controller: Select Shanghai, New York or Hawaii; use the four simulation buttons; Pencil, Eraser and Hammer edit or damage the dam; select an entity then tap to place it.",
         "Model: Waves overtop and weaken the dam; a breach accelerates flooding. Boats float or capsize, passengers swim, and rescue follows the wave sequence. Location selection restores a fresh scene.",
@@ -284,18 +284,28 @@
       ]
     },
     {
+      "dot": "cyan",
+      "title": "Pilot Life — MVC Example",
+      "items": [
+        "Controller: Arrow keys steer, climb and descend; + / − changes throttle; G toggles landing gear. Pause freezes the flight.",
+        "Model: Stores altitude, speed, pitch, landing gear and engine health. It calculates flight motion and checks whether a touchdown is safe for water or a runway.",
+        "View: A 3D aircraft, city skyline, instruments, maps and engine warnings show the current flight state.",
+        "Check: Climb and watch altitude change; lower and retract the gear; pause and resume; complete a safe landing to earn career credits."
+      ]
+    },
+    {
       "dot": "slate",
       "title": "One Feature, Three Responsibilities",
       "items": [
-        "Bigger button \u2014 View: its label, size, color and screen position.",
-        "Bigger button \u2014 Controller: a press sends an increase-size command.",
-        "Bigger button \u2014 Model: wave size changes within bounds and affects future waves.",
+        "Bigger button — View: its label, size, color and screen position.",
+        "Bigger button — Controller: a press sends an increase-size command.",
+        "Bigger button — Model: wave size changes within bounds and affects future waves.",
         "The Controller requests an action; the Model decides the outcome; the View makes that outcome visible."
       ]
     },
     {
       "dot": "slate",
-      "title": "Update Template \u2014 Keep Each Change Clear",
+      "title": "Update Template — Keep Each Change Clear",
       "items": [
         "Change: ___. What happens now: ___. What I want instead: ___.",
         "Model: What rule, state or timing changes? ___. View: What looks, moves or sounds different? ___. Controller: What player action changes? ___.",
